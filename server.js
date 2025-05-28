@@ -29,16 +29,23 @@ app.get('/', (req, res) => {
   res.send('<h1>Welcome to my server</h1>')
 })
 
-connectDB()
-  .then(
-    () => {
-      app.listen(process.env.PORT, () => {
-        console.log('welcome to server')
-      })
-    }
-  ).catch((err) => {
-    console.error('Failed to connect to the database:', err);
-  })
+// connectDB()
+//   .then(
+//     () => {
+//       app.listen(process.env.PORT, () => {
+//         console.log('welcome to server')
+//       })
+//     }
+//   ).catch((err) => {
+//     console.error('Failed to connect to the database:', err);
+//   })
+
+const handler = async (req, res) => {
+  await connectDB()
+  return app(req, res)
+}
+
+export default handler
 
 app.use('/', (req, res) => {
   res.send('<h1>welcom to my server</h1>')
