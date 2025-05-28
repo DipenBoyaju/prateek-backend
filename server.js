@@ -25,6 +25,10 @@ app.use('/api', teamRoute);
 app.use('/api', eventRoute);
 app.use('/api', mailRoute);
 
+app.get('/', (req, res) => {
+  res.send('<h1>Welcome to my server</h1>')
+})
+
 connectDB()
   .then(
     () => {
