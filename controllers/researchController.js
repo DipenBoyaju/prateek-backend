@@ -58,7 +58,7 @@ export const addResearch = async (req, res) => {
 
 export const getAllResearch = async (req, res) => {
   try {
-    const researchList = await Research.find();
+    const researchList = await Research.find().lean();
     res.status(200).json(researchList);
   } catch (error) {
     console.error("Error fetching research data:", error);
