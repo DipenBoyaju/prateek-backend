@@ -13,25 +13,25 @@ const app = express()
 
 const PORT = process.env.PORT || 5000;
 
-const allowedOrigins = ['https://prateek-1.vercel.app'];
-
-// app.use(cors({
-//   // origin: 'http://localhost:5173',
-//   origin: 'https://prateek-1.vercel.app',
-//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//   credentials: true,
-// }));
+// const allowedOrigins = ['https://prateek-1.vercel.app'];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true // if you're using cookies or auth headers
+  // origin: 'http://localhost:5173',
+  origin: 'https://prateek-1.vercel.app',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
 }));
+
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true // if you're using cookies or auth headers
+// }));
 app.use(express.json());
 
 
