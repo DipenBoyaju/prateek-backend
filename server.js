@@ -17,9 +17,7 @@ const PORT = process.env.PORT || 5000;
 
 
 app.use(cors({
-  // origin: 'http://localhost:5173',
-  // origin: 'https://prateek-1.vercel.app',
-  origin: 'https://e2fc0427.sitepreview.org',
+  origin: 'http://prateekinnovations.com',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
