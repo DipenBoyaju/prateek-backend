@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 
 
 app.use(cors({
-  origin: 'http://prateekinnovations.com',
+  origin: 'http://localhost:5173',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
@@ -62,6 +62,10 @@ connectDB()
 // }
 
 // export default handler
+
+app.get('/', (req, res) => {
+  res.send('Server is up');
+});
 
 app.use('/', (req, res) => {
   res.send('<h1>welcom to my server</h1>')
