@@ -13,25 +13,27 @@ const app = express()
 
 const PORT = process.env.PORT || 5000;
 
-// const allowedOrigins = ['https://prateek-1.vercel.app'];
+const allowedOrigins = [
+  'http://prateekinnovations.com',
+];
 
-
-app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-}));
 
 // app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true // if you're using cookies or auth headers
+//   origin: 'http://localhost:5173',
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   credentials: true,
 // }));
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true // if you're using cookies or auth headers
+}));
 app.use(express.json());
 
 
@@ -42,8 +44,14 @@ app.use('/api', eventRoute);
 app.use('/api', mailRoute);
 
 app.get('/', (req, res) => {
-  res.send('<h1>Welcome to my server</h1>')
-})
+  res.send('<h1>Welcome to my server</h1>');
+});
+
+app.get('/ping', (req, res) => {
+  console.log(`[${new Date().toISOString()}] Cron ping received`);
+  res.status(200).send('Pong from server');
+});
+
 
 connectDB()
   .then(
@@ -62,11 +70,3 @@ connectDB()
 // }
 
 // export default handler
-
-app.get('/', (req, res) => {
-  res.send('Server is up');
-});
-
-app.use('/', (req, res) => {
-  res.send('<h1>welcom to my server</h1>')
-})
