@@ -15,6 +15,9 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
   'http://prateekinnovations.com',
+  'https://prateekinnovations.com',
+  'http://www.prateekinnovations.com',
+  'https://www.prateekinnovations.com',
 ];
 
 
