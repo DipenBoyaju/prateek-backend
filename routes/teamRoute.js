@@ -1,11 +1,15 @@
 import express from 'express';
-import { createTeamMember, getTeamByDepartment } from '../controllers/teamController.js';
+import { createTeamMember, deleteTeamMember, editTeamMember, getAllTeamMember, getMemberBySlug, getTeamByDepartment } from '../controllers/teamController.js';
 
 
 const router = express.Router();
 
-router.post('/team', createTeamMember);
+router.post('/team/addMember', createTeamMember);
+router.put('/team/editMember/:slug', editTeamMember);
+router.get('/team/member/:slug', getMemberBySlug);
+router.get('/team/department/:department', getTeamByDepartment);
+router.delete('/team/member/:id', deleteTeamMember);
+router.get('/team/members', getAllTeamMember);
 
-router.get('/team/:department', getTeamByDepartment);
 
 export default router;

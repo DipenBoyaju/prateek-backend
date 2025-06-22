@@ -85,3 +85,35 @@ export const getResearchById = async (req, res) => {
     });
   }
 }
+
+export const updateResearchById = async (req, res) => {
+  const { id } = req.params;
+  const { description } = req.body;
+
+  try {
+    if (!description) {
+      return res.status(400).json({
+        message: "Description is required"
+      })
+    }
+
+    const research = await Research.findById(id);
+
+    if (!research) {
+      return res.status(404).json({ message: "Research item not found." });
+    }
+
+    research.description = description;
+
+    await research.save()
+
+    res.status(200).json({
+      message: "Research description updated successfully.",
+      data: research,
+    });
+
+  } catch (error) {
+    console.error("Error updating research:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+}

@@ -7,6 +7,7 @@ import researchRoute from './routes/researchRoute.js'
 import teamRoute from './routes/teamRoute.js'
 import eventRoute from './routes/eventRoute.js'
 import mailRoute from './routes/mailRoute.js'
+import newsRoute from './routes/newsRoute.js'
 
 dotenv.config()
 const app = express()
@@ -27,6 +28,7 @@ const allowedOrigins = [
 //   credentials: true,
 // }));
 
+// for render
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -45,6 +47,7 @@ app.use('/api', researchRoute);
 app.use('/api', teamRoute);
 app.use('/api', eventRoute);
 app.use('/api', mailRoute);
+app.use('/api', newsRoute);
 
 app.get('/', (req, res) => {
   res.send('<h1>Welcome to my server</h1>');
