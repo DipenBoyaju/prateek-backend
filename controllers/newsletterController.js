@@ -4,7 +4,6 @@ import { convert } from 'pdf-poppler';
 import cloudinary from 'cloudinary';
 import fs from 'fs';
 import path from 'path';
-import dotenv from 'dotenv'
 
 // dotenv.config()
 cloudinary.v2.config({
