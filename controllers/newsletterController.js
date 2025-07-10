@@ -82,6 +82,7 @@ export const uploadNewsletter = async (req, res) => {
   }
 };
 
+
 export const getAllNewsletters = async (req, res) => {
   try {
     const all = await Newsletter.find().sort({ createdAt: -1 });
