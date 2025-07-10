@@ -16,7 +16,11 @@ export const AdminSignup = async (req, res) => {
     await user.save();
 
     const token = createToken(user._id)
-    res.cookie("token", token, { httpOnly: true }).status(201).json({ message: "Admin created" })
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false
+    }).status(201).json({ message: "Admin created" })
 
   } catch (error) {
     console.error("Admin Signup Error:", error);
@@ -40,7 +44,11 @@ export const login = async (req, res) => {
 
     const token = createToken(user._id);
 
-    res.cookie("token", token, { httpOnly: true }).status(200).json({
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false
+    }).status(200).json({
       message: "Logged In",
       user: {
         _id: user._id,
@@ -65,3 +73,30 @@ export const logout = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+export const changePassword = async (req, res) => {
+  try {
+    const { newPassword, oldPassword } = req.body;
+
+    if (!newPassword || !oldPassword) {
+      return res.status(400).json({ message: "Both old and new password is required" })
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const isMatch = await user.comparePassword(oldPassword);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully." });
+
+  } catch (error) {
+    console.error("Change Password Error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}

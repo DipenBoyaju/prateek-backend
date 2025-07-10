@@ -10,7 +10,8 @@ export const addEvent = async (req, res) => {
       endDate,
       time,
       location,
-      image = ""
+      image = "",
+      publish,
     } = req.body;
 
     // Validate required fields
@@ -39,6 +40,7 @@ export const addEvent = async (req, res) => {
       time,
       location,
       image,
+      publish,
     });
 
     const savedEvent = await newEvent.save();
@@ -85,7 +87,8 @@ export const updateEventById = async (req, res) => {
       endDate,
       time,
       location,
-      image = ""
+      image = "",
+      publish,
     } = req.body;
 
     // Validate required fields (optional but good practice)
@@ -112,6 +115,7 @@ export const updateEventById = async (req, res) => {
       time,
       location,
       image,
+      publish
     };
 
     const updatedEvent = await Event.findByIdAndUpdate(id, updates, {
@@ -146,3 +150,26 @@ export const deleteEventById = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const publishStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { publish } = req.body;
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      id,
+      { $set: { publish } },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    return res.status(200).json({ message: "Event Published", event: updatedEvent });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+

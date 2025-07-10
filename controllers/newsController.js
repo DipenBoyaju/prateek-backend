@@ -3,7 +3,7 @@ import { generateUniqueSlug } from "../utils/slugifyUnique.js";
 
 
 export const createNews = async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, publish } = req.body;
 
   if (!title || !description) {
     return res.status(400).json({ message: "All Fields required" });
@@ -15,7 +15,8 @@ export const createNews = async (req, res) => {
     const newNews = new News({
       title,
       slug,
-      description
+      description,
+      publish
     })
 
     const savedNews = await newNews.save()
@@ -60,7 +61,7 @@ export const getNewsBySlug = async (req, res) => {
 
 export const editNews = async (req, res) => {
   const { id } = req.params;
-  const { title, description } = req.body;
+  const { title, description, publish } = req.body;
 
   if (!title || !description) {
     return res.status(400).json({ message: "All fields are required" });
@@ -82,7 +83,7 @@ export const editNews = async (req, res) => {
 
     const updatedNews = await News.findByIdAndUpdate(
       id,
-      { title, description, slug },
+      { title, description, slug, publish },
       { new: true }
     );
 
@@ -111,5 +112,27 @@ export const deleteNews = async (req, res) => {
   } catch (error) {
     console.error("Error deleting news:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const publishStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { publish } = req.body;
+
+    const updatedNews = await News.findByIdAndUpdate(
+      id,
+      { $set: { publish } },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedNews) {
+      return res.status(404).json({ message: "News not found" });
+    }
+
+    return res.status(200).json({ message: "News Published", news: updatedNews });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

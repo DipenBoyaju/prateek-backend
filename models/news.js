@@ -15,6 +15,10 @@ const newsSchema = new mongoose.Schema({
   description: {
     type: String,
     required: true,
+  },
+  publish: {
+    type: Boolean,
+    default: false,
   }
 }, { timestamps: true })
 
