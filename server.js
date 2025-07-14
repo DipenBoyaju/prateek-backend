@@ -20,32 +20,32 @@ const app = express()
 const PORT = process.env.PORT || 5000;
 
 //for render
-// const allowedOrigins = [
-//   'http://prateekinnovations.com',
-//   'https://prateekinnovations.com',
-//   'http://www.prateekinnovations.com',
-//   'https://www.prateekinnovations.com',
-//   'https://prateek-1.vercel.app',
-// ];
+const allowedOrigins = [
+  'http://prateekinnovations.com',
+  'https://prateekinnovations.com',
+  'http://www.prateekinnovations.com',
+  'https://www.prateekinnovations.com',
+  'https://prateek-1.vercel.app',
+];
 
 //forlocal
-app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-}));
+// app.use(cors({
+//   origin: 'http://localhost:5173',
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   credentials: true,
+// }));
 
 // for render
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true // if you're using cookies or auth headers
-// }));
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true // if you're using cookies or auth headers
+}));
 
 app.use(express.json());
 app.use(cookieParser());
