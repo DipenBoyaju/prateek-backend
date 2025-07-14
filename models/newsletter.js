@@ -16,6 +16,10 @@ const newsletterSchema = new mongoose.Schema({
   coverUrl: {
     type: String,
     required: true,
+  },
+  publish: {
+    type: Boolean,
+    default: false
   }
 },
   { timestamps: true }

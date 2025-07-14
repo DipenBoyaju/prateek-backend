@@ -1,9 +1,9 @@
 import Newsletter from "../models/newsletter.js";
 import { supabase } from '../utils/supabaseClient.js';
-import { convert } from 'pdf-poppler';
+// import { convert } from 'pdf-poppler';
 import cloudinary from 'cloudinary';
-import fs from 'fs';
-import path from 'path';
+// import fs from 'fs';
+// import path from 'path';
 
 // dotenv.config()
 cloudinary.v2.config({
@@ -12,75 +12,76 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 
-export const uploadNewsletter = async (req, res) => {
-  try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+// export const uploadNewsletter = async (req, res) => {
+//   try {
+//     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-    const { buffer, originalname } = req.file;
-    const { title } = req.body;
+//     const { buffer, originalname } = req.file;
+//     const { title, publish } = req.body;
 
-    if (!title) return res.status(400).json({ error: 'Title is required' });
+//     if (!title) return res.status(400).json({ error: 'Title is required' });
 
-    const filePath = `newsletters/${Date.now()}-${Math.floor(Math.random() * 1000)}-${originalname}`;
+//     const filePath = `newsletters/${Date.now()}-${Math.floor(Math.random() * 1000)}-${originalname}`;
 
-    // ✅ Upload PDF to Supabase Storage
-    const { data, error: uploadError } = await supabase.storage
-      .from('newsletters')
-      .upload(filePath, buffer, {
-        contentType: 'application/pdf',
-        upsert: false,
-      });
+//     // ✅ Upload PDF to Supabase Storage
+//     const { data, error: uploadError } = await supabase.storage
+//       .from('newsletters')
+//       .upload(filePath, buffer, {
+//         contentType: 'application/pdf',
+//         upsert: false,
+//       });
 
-    if (uploadError) throw uploadError;
+//     if (uploadError) throw uploadError;
 
-    const { data: publicUrlData, error: urlError } = supabase.storage
-      .from('newsletters')
-      .getPublicUrl(filePath);
+//     const { data: publicUrlData, error: urlError } = supabase.storage
+//       .from('newsletters')
+//       .getPublicUrl(filePath);
 
-    if (urlError) throw urlError;
+//     if (urlError) throw urlError;
 
-    const publicUrl = publicUrlData.publicUrl;
+//     const publicUrl = publicUrlData.publicUrl;
 
-    // ✅ Save buffer locally to temp file for cover generation
-    const tempPdfPath = `./uploads/${Date.now()}-${originalname}`;
-    fs.writeFileSync(tempPdfPath, buffer);
+//     // ✅ Save buffer locally to temp file for cover generation
+//     const tempPdfPath = `./uploads/${Date.now()}-${originalname}`;
+//     fs.writeFileSync(tempPdfPath, buffer);
 
-    // ✅ Generate cover JPG from page 1
-    const opts = {
-      format: 'jpeg',
-      out_dir: './uploads',
-      out_prefix: path.basename(tempPdfPath, '.pdf'),
-      page: 1,
-    };
-    await convert(tempPdfPath, opts);
+//     // ✅ Generate cover JPG from page 1
+//     const opts = {
+//       format: 'jpeg',
+//       out_dir: './uploads',
+//       out_prefix: path.basename(tempPdfPath, '.pdf'),
+//       page: 1,
+//     };
+//     await convert(tempPdfPath, opts);
 
-    const coverPath = `./uploads/${opts.out_prefix}-1.jpg`;
+//     const coverPath = `./uploads/${opts.out_prefix}-1.jpg`;
 
-    // ✅ Upload cover image to Cloudinary
-    const cloudinaryRes = await cloudinary.v2.uploader.upload(coverPath, {
-      folder: 'newsletter-covers',
-    });
+//     // ✅ Upload cover image to Cloudinary
+//     const cloudinaryRes = await cloudinary.v2.uploader.upload(coverPath, {
+//       folder: 'newsletter-covers',
+//     });
 
-    const coverUrl = cloudinaryRes.secure_url;
+//     const coverUrl = cloudinaryRes.secure_url;
 
-    // ✅ Save newsletter in MongoDB with both URLs
-    const savedNewsletter = await Newsletter.create({
-      title,
-      fileUrl: publicUrl,
-      fileKey: filePath,
-      coverUrl,
-    });
+//     // ✅ Save newsletter in MongoDB with both URLs
+//     const savedNewsletter = await Newsletter.create({
+//       title,
+//       fileUrl: publicUrl,
+//       fileKey: filePath,
+//       coverUrl,
+//       publish,
+//     });
 
-    // ✅ Clean up temp files
-    fs.unlinkSync(tempPdfPath);
-    fs.unlinkSync(coverPath);
+//     // ✅ Clean up temp files
+//     fs.unlinkSync(tempPdfPath);
+//     fs.unlinkSync(coverPath);
 
-    res.status(201).json({ message: 'Uploaded', data: savedNewsletter });
-  } catch (error) {
-    console.error('Upload error:', error);
-    res.status(500).json({ error: 'Upload failed', details: error.message });
-  }
-};
+//     res.status(201).json({ message: 'Uploaded', data: savedNewsletter });
+//   } catch (error) {
+//     console.error('Upload error:', error);
+//     res.status(500).json({ error: 'Upload failed', details: error.message });
+//   }
+// };
 
 
 export const getAllNewsletters = async (req, res) => {
@@ -120,3 +121,24 @@ export const deleteNewsletter = async (req, res) => {
   }
 };
 
+export const publishStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { publish } = req.body;
+
+    const updatedNewsletter = await Newsletter.findByIdAndUpdate(
+      id,
+      { $set: { publish } },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedNewsletter) {
+      return res.status(404).json({ message: "Newsletter not found" });
+    }
+
+    return res.status(200).json({ message: "News Published", newsletter: updatedNewsletter });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
