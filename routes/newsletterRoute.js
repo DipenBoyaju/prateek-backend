@@ -1,5 +1,5 @@
 import express from 'express'
-import { deleteNewsletter, getAllNewsletters, publishStatus, uploadNewsletter } from '../controllers/newsletterController.js';
+import { deleteNewsletter, getAllNewsletters, publishStatus } from '../controllers/newsletterController.js';
 import { uploadPdf } from '../middleware/multerMiddleware.js'
 
 const router = express.Router()
